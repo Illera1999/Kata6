@@ -1,8 +1,7 @@
 package kata6.apps.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.PopupMenu;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -11,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import kata6.control.BlockPresenter;
 import kata6.control.Command;
 import kata6.control.DownCommand;
 import kata6.control.LeftCommand;
@@ -25,39 +25,38 @@ public class Main extends JFrame{
         new Main().execute();
     }
 
-    private BlockDisplay blockDisplay;
+    private BlockPanel blockDisplay;
     private Map<String,Command> commands = new HashMap<>();
+    private Block block;
+    private BlockPresenter blockPresenter;
     
     public Main() {
         this.setTitle("Block shifter");
-        this.setSize(700,762);
+        this.setSize(700,722);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().add(blockPanel());
         this.add(toolbar(), BorderLayout.SOUTH);
-        
-        Block block = new Block(4,4);
-        blockDisplay.display(block);
-        commands.put("up", new UpCommand(block));
-        commands.put("down", new DownCommand(block));
-        commands.put("left", new LeftCommand(block));
-        commands.put("right", new RightCommand(block));
+        this.commands = createCommands();
     }
 
-
     private void execute() {
+        this.block = new Block(4,4);
+        this.blockPresenter = new BlockPresenter(block, blockDisplay);
+        this.commands = createCommands();
         this.setVisible(true);
     }
 
     private JPanel blockPanel() {
-        BlockPanel blockPanel = new BlockPanel();
+        BlockPanel blockPanel = new BlockPanel(Block.MAX);
         this.blockDisplay=blockPanel;
         return blockPanel;
     }
 
     private JMenuBar toolbar() {
         JMenuBar toolbar = new JMenuBar();
+        toolbar.setLayout(new FlowLayout(FlowLayout.CENTER));
         toolbar.add(button("left"));
         toolbar.add(button("right"));
         toolbar.add(button("up"));
@@ -74,5 +73,14 @@ public class Main extends JFrame{
             }
         });
         return button;
+    }
+
+    private Map<String, Command> createCommands() {
+        Map<String , Command> commands = new HashMap<>();
+        commands.put("Up",new UpCommand(block));
+        commands.put("Down",new DownCommand(block));
+        commands.put("Left",new LeftCommand(block));
+        commands.put("Right",new RightCommand(block));
+        return commands;
     }
 }

@@ -77,4 +77,10 @@ public class Block {
     public interface Observer{
         void changed();
     }
+    
+    public void moveTo(int x, int y){
+        this.x=x;
+        this.y=y;
+        changed();
+    }
 }
